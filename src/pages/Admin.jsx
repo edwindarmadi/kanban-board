@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { getAllBoards } from '../lib/db.js'
+import { getAllBoards, deleteBoard } from '../lib/db.js'
 
 function Admin() {
   const [boards, setBoards] = useState([])
@@ -71,12 +71,25 @@ function Admin() {
                     Created: {new Date(board.created_at).toLocaleDateString()}
                   </p>
                 </div>
-                <button
-                  onClick={() => copyLink(board.id)}
-                  className="rounded-lg border border-gray-700 px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-800"
-                >
-                  {copiedId === board.id ? 'Copied!' : 'Copy link'}
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => copyLink(board.id)}
+                    className="rounded-lg border border-gray-700 px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-800"
+                  >
+                    {copiedId === board.id ? 'Copied!' : 'Copy link'}
+                  </button>
+                  <button
+                    onClick={async () => {
+                      if (window.confirm(`Delete "${board.name}'s Board"? This removes all its tasks too.`)) {
+                        await deleteBoard(board.id)
+                        setBoards((prev) => prev.filter((b) => b.id !== board.id))
+                      }
+                    }}
+                    className="rounded-lg border border-red-900 px-3 py-1.5 text-sm text-red-400 hover:bg-red-950"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             ))}
           </div>

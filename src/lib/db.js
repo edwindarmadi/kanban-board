@@ -31,6 +31,12 @@ export async function getAllBoards() {
   return data
 }
 
+export async function deleteBoard(boardId) {
+  // Tasks are deleted automatically via "on delete cascade" in the DB
+  const { error } = await supabase.from('boards').delete().eq('id', boardId)
+  if (error) throw error
+}
+
 // ─── Tasks ─────────────────────────────────────────────────
 
 export async function getTasks(boardId) {
@@ -43,13 +49,13 @@ export async function getTasks(boardId) {
   return data
 }
 
-export async function createTask(boardId, title, column = 'todo') {
-  // Get the max position for this column so the new task goes at the end
+export async function createTask(boardId, title, status = 'todo') {
+  // Get the max position for this status so the new task goes at the end
   const { data: existing } = await supabase
     .from('tasks')
     .select('position')
     .eq('board_id', boardId)
-    .eq('column', column)
+    .eq('status', status)
     .order('position', { ascending: false })
     .limit(1)
 
@@ -57,7 +63,7 @@ export async function createTask(boardId, title, column = 'todo') {
 
   const { data, error } = await supabase
     .from('tasks')
-    .insert({ board_id: boardId, title, column, position: nextPosition })
+    .insert({ board_id: boardId, title, status, position: nextPosition })
     .select()
     .single()
   if (error) throw error
@@ -66,7 +72,7 @@ export async function createTask(boardId, title, column = 'todo') {
 
 export async function updateTask(taskId, updates) {
   // If moving to "done", record the completion time
-  if (updates.column === 'done') {
+  if (updates.status === 'done') {
     updates.completed_at = new Date().toISOString()
   }
 
@@ -98,7 +104,7 @@ export async function getWeeklyStats() {
   const { data, error } = await supabase
     .from('tasks')
     .select('board_id, completed_at, boards(name)')
-    .eq('column', 'done')
+    .eq('status', 'done')
     .gte('completed_at', monday.toISOString())
   if (error) throw error
 

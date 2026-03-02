@@ -14,7 +14,7 @@ function Card({ task, onRefresh }) {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: task.id, data: { column: task.column } })
+  } = useSortable({ id: task.id, data: { status: task.status } })
 
   const style = {
     transform: CSS.Transform.toString(transform),

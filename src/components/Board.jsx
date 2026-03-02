@@ -50,26 +50,26 @@ function Board({ boardId }) {
 
     const taskId = active.id
     // Determine target column: if dropped on a column directly, use that;
-    // if dropped on another card, use that card's column
+    // if dropped on another card, use that card's status
     let targetColumn = null
     if (COLUMNS.includes(over.id)) {
       targetColumn = over.id
     } else {
       const overTask = tasks.find((t) => t.id === over.id)
-      if (overTask) targetColumn = overTask.column
+      if (overTask) targetColumn = overTask.status
     }
 
     if (!targetColumn) return
 
     const task = tasks.find((t) => t.id === taskId)
-    if (task && task.column !== targetColumn) {
+    if (task && task.status !== targetColumn) {
       // Optimistic update
       setTasks((prev) =>
         prev.map((t) =>
-          t.id === taskId ? { ...t, column: targetColumn } : t
+          t.id === taskId ? { ...t, status: targetColumn } : t
         )
       )
-      await updateTask(taskId, { column: targetColumn })
+      await updateTask(taskId, { status: targetColumn })
       fetchTasks()
     }
   }
@@ -84,7 +84,7 @@ function Board({ boardId }) {
 
   const tasksByColumn = {}
   for (const col of COLUMNS) {
-    tasksByColumn[col] = tasks.filter((t) => t.column === col)
+    tasksByColumn[col] = tasks.filter((t) => t.status === col)
   }
 
   return (

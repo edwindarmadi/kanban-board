@@ -48,7 +48,7 @@ src/
 
 Two tables in `supabase-schema.sql`:
 - **boards**: `id` (uuid PK), `name`, `created_at`
-- **tasks**: `id` (uuid PK), `board_id` (FK → boards), `title`, `column` (todo|in_progress|done), `position`, `created_at`, `completed_at`
+- **tasks**: `id` (uuid PK), `board_id` (FK → boards), `title`, `status` (todo|in_progress|done), `position`, `created_at`, `completed_at`
 
 RLS is enabled with permissive policies (appropriate for a personal tool between known users).
 
@@ -62,5 +62,13 @@ Stored in `.env` (gitignored). See `.env.example` for the template:
 
 - **URL-based identity**: No auth. Each board has a UUID in the URL — bookmarking is the "login"
 - **Optimistic updates**: Card moves update local state immediately, then sync to Supabase
-- **Column IDs**: Always use `todo`, `in_progress`, `done` (snake_case strings, defined in `Column.jsx` and `Board.jsx`)
+- **Status values**: Always use `todo`, `in_progress`, `done` (snake_case strings, defined in `Column.jsx` and `Board.jsx`). The DB column is `status` (not `column` — that's a reserved word in SQL)
 - **GitHub Pages SPA**: Uses `basename="/kanban-board"` in both `vite.config.js` and `BrowserRouter`. If the repo name changes, update both.
+
+## Workflow Preferences
+
+When the user needs to create a file (like `.env`, config files, etc.), just create it with clear placeholder values so they can paste in what they need. Don't ask them to paste values into chat — create the file and let them edit it directly in VS Code.
+
+## SQL Rules
+
+Never use SQL reserved words as column names in Supabase schemas. Common traps: `column`, `table`, `order`, `user`, `group`, `type`, `index`, `key`, `value`. Always pick a descriptive alternative (e.g. `status` instead of `column`, `sort_order` instead of `order`, `profile` instead of `user`).

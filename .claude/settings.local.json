@@ -5,7 +5,9 @@
       "Bash(npx:*)",
       "Bash(npm install:*)",
       "Bash(rm:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(gh auth:*)",
+      "Bash(gh repo:*)"
     ]
   }
 }

@@ -13,7 +13,7 @@ create table tasks (
   id uuid default gen_random_uuid() primary key,
   board_id uuid references boards(id) on delete cascade not null,
   title text not null,
-  column text not null default 'todo',
+  status text not null default 'todo',
   position int not null default 0,
   created_at timestamptz default now(),
   completed_at timestamptz
